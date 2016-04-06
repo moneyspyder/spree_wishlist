@@ -12,7 +12,7 @@ class Spree::WishlistsController < Spree::StoreController
   end
 
   def index
-    @wishlists = spree_current_user.wishlists
+    @wishlists = (spree_current_user ? spree_current_user.wishlists : [])
     respond_with(@wishlist)
   end
 
