@@ -59,5 +59,9 @@ class Spree::WishlistsController < Spree::StoreController
   # Isolate this method so it can be overwritten
   def find_wishlist
     @wishlist = Spree::Wishlist.find_by_access_hash!(params[:id])
+    if @wishlist && @wishlist.is_private && @wishlist.user != spree_current_user
+      flash[:alert] = "The wishlist is not public"
+      redirect_to '/'
+    end
   end
 end
