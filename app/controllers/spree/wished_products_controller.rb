@@ -1,4 +1,5 @@
 class Spree::WishedProductsController < Spree::StoreController
+  load_and_authorize_resource
   respond_to :html
 
   def create
@@ -39,5 +40,18 @@ class Spree::WishedProductsController < Spree::StoreController
 
   def wished_product_attributes
     params.require(:wished_product).permit(:variant_id, :wishlist_id, :remark, :quantity)
+  end
+
+  def store_location
+    # redirect back to product page after non-loged in user sign in
+    if request.fullpath.gsub('//', '/') == '/wished_products' && params["wished_product"]
+      variant = Spree::Variant.find_by_id(params["wished_product"]["variant_id"])
+      if variant
+        session['spree_user_return_to'] = spree.product_path(variant.product)
+      else
+        flash[:alert] = "Product variant not found"
+        session['spree_user_return_to'] = '/'
+      end
+    end
   end
 end

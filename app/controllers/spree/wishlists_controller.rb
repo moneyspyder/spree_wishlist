@@ -30,7 +30,9 @@ class Spree::WishlistsController < Spree::StoreController
   end
 
   def default
-    @wishlist = spree_current_user.wishlist
+    @wishlist = spree_current_user.try(:wishlist)
+    # only allow logged in users to see their default list
+    authorize! :update, @wishlist
     respond_with(@wishlist) do |format|
       format.html { render :show }
     end
